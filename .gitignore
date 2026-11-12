@@ -1,0 +1,24 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# ---- macOS ----
+.DS_Store
+._*
+
+# ---- 课件运行产生的临时文件 ----
+# 第 8 章随堂示例会生成 demo8_*.txt / demo8_*.csv，运行结束后可删
+08文件操作/demo8_*
+
+# ---- 内部维护资料（不进公开仓库）----
+# build/ 下的构建脚本建议保留，便于二次开发；memory 与 backup 属于本地工作记录与备份
+.workbuddy/memory/
+.workbuddy/backup/
+.workbuddy/build/__pycache__/
