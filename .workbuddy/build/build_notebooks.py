@@ -12,13 +12,13 @@
 用法：python3 build_notebooks.py [章节目录名...]
 """
 
+import hashlib
 import json
 import os
 import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-ROOT = "/Users/waiyu/Library/Mobile Documents/com~apple~CloudDocs/Work/系部工作/专项分类/智能网联汽车技术应用/Python/Python_Tutorial_on_smartTransportation"
 
 CHAPTERS = [
     ("01初识Python世界", "01_初识Python世界.ipynb"),
@@ -26,6 +26,7 @@ CHAPTERS = [
     ("03流程控制", "03_流程控制.ipynb"),
     ("04字符串与输入输出", "04_字符串与输入输出.ipynb"),
     ("05列表元组集合与字典", "05_列表元组集合与字典.ipynb"),
+    ("05A_Trae调试功能", "05A_Trae调试功能.ipynb"),
     ("06函数", "06_函数.ipynb"),
     ("07高级函数", "07_高级函数.ipynb"),
     ("08文件操作", "08_文件操作.ipynb"),
@@ -136,19 +137,24 @@ def parse(md_text, out_cells, problems):
     flush()
 
 
+def title_of(folder):
+    """文件夹名 -> 章节标题：01初识Python世界 -> 初识Python世界，05A_Trae调试功能 -> Trae调试功能"""
+    return re.sub(r"^\d+[A-Za-z]?_?", "", folder)
+
+
 def nav_cell(idx):
     prev_link = "◀ 上一章"
     prev_dir = None
     prev_nb = None
     if idx > 0:
         prev_dir, prev_nb = CHAPTERS[idx - 1]
-        prev_link = "◀ 上一章：%s" % prev_dir[2:]
+        prev_link = "◀ 上一章：%s" % title_of(prev_dir)
     nxt = "下一章 ▶"
     nxt_dir = None
     nxt_nb = None
     if idx + 1 < len(CHAPTERS):
         nxt_dir, nxt_nb = CHAPTERS[idx + 1]
-        nxt = "下一章：%s ▶" % nxt_dir[2:]
+        nxt = "下一章：%s ▶" % title_of(nxt_dir)
 
     parts = ["[🏠 课程首页](../00_课程索引.ipynb)"]
     if prev_dir:
@@ -157,6 +163,23 @@ def nav_cell(idx):
         parts.append("&nbsp;&nbsp;|&nbsp;&nbsp;[%s](../%s/%s)" % (nxt, nxt_dir, nxt_nb))
     text = "---\n\n" + "".join(parts)
     return md_cell(text)
+
+
+def old_cell_ids(out):
+    """返回 (文件是否存在, 既有单元格 id 列表)。
+
+    既有 notebook 若本来就带 id，重建时按位置复用；若本来没有 id（早期文件），
+    保持原样不加，避免重建产生大面积无意义 diff。
+    """
+    if not os.path.exists(out):
+        return False, []
+    try:
+        with open(out, encoding="utf-8") as f:
+            old = json.load(f)
+        ids = [c.get("id") for c in old.get("cells", [])]
+        return (any(ids), ids)
+    except Exception:
+        return False, []
 
 
 def build(idx):
@@ -173,6 +196,26 @@ def build(idx):
     nav = nav_cell(idx)
     if nav:
         cells.append(nav)
+
+    # nbformat 4.5 要求每个单元格有唯一 id：新文件生成，旧文件有则复用、无则不加；
+    # id 插在 metadata 之前，与既有 notebook 的键顺序保持一致，避免重建产生无意义 diff
+    out = os.path.join(ROOT, folder, nb_name)
+    need_id, reused = old_cell_ids(out)
+    if not os.path.exists(out):
+        need_id = True
+    if need_id:
+        ordered = []
+        for i, c in enumerate(cells):
+            cid = reused[i] if i < len(reused) and reused[i] else \
+                hashlib.md5(("%s-%d-%s" % (folder, i, c["cell_type"])).encode("utf-8")).hexdigest()[:8]
+            new = {}
+            for k, v in c.items():
+                if k == "metadata":
+                    new["id"] = cid
+                new[k] = v
+            new.setdefault("id", cid)
+            ordered.append(new)
+        cells = ordered
 
     nb = {
         "cells": cells,
@@ -196,7 +239,6 @@ def build(idx):
     with open(out, "w", encoding="utf-8") as f:
         json.dump(nb, f, ensure_ascii=False, indent=1)
         f.write("\n")
-
     n_md = sum(1 for c in cells if c["cell_type"] == "markdown")
     n_code = sum(1 for c in cells if c["cell_type"] == "code")
     print("✅ %-22s cells=%d (md %d / code %d)%s" % (folder, len(cells), n_md, n_code,

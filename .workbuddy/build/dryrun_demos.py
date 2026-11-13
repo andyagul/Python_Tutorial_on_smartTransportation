@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from demos import DEMOS  # noqa: E402
 
-ROOT = "/Users/waiyu/Library/Mobile Documents/com~apple~CloudDocs/Work/系部工作/专项分类/智能网联汽车技术应用/Python/Python_Tutorial_on_smartTransportation"
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def flags(out):

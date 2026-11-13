@@ -8,7 +8,7 @@
 
 import os
 
-ROOT = "/Users/waiyu/Library/Mobile Documents/com~apple~CloudDocs/Work/系部工作/专项分类/智能网联汽车技术应用/Python/Python_Tutorial_on_smartTransportation"
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 ANCHOR = "\n---\n\n# 第一部分　集中讲解"
 

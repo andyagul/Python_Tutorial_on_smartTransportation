@@ -13,12 +13,12 @@
 import os
 import re
 
-ROOT = "/Users/waiyu/Library/Mobile Documents/com~apple~CloudDocs/Work/系部工作/专项分类/智能网联汽车技术应用/Python/Python_Tutorial_on_smartTransportation"
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 CHAPTERS = [
     "01初识Python世界", "02变量与数据类型", "03流程控制", "04字符串与输入输出",
-    "05列表元组集合与字典", "06函数", "07高级函数", "08文件操作", "09异常处理",
-    "10模块与程序包", "11面向对象编程上", "12面向对象编程下", "13综合项目实战",
+    "05列表元组集合与字典", "05A_Trae调试功能", "06函数", "07高级函数", "08文件操作",
+    "09异常处理", "10模块与程序包", "11面向对象编程上", "12面向对象编程下", "13综合项目实战",
 ]
 
 FENCE_OPEN = re.compile(r"^```python\s+(\S.*?)\s*$")
