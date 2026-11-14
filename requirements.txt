@@ -1,4 +1,25 @@
 # Python 编程基础（智慧交通）课件依赖
-# 第 1—12 章与终结性考核仅使用标准库，无需安装任何第三方包。
+#
+# 第 1—12 章、第 14—15 章与终结性考核仅使用 Python 标准库，无需安装任何第三方包。
 # 第 13 章「综合项目实战」的 pygame 车流仿真需要以下依赖：
 pygame>=2.1
+
+# ── 第 14—15 章「本地 AI 拓展模块」说明 ──────────────────────────────
+# 两个案例（AI 图片标注 / 交通事件 NLP）全部用标准库实现：
+#   pathlib / base64 / json / urllib.request / re / csv / collections
+# 案例主程序默认走「离线演示模式」，不装任何东西即可运行，输出可逐字校对。
+#
+# 真实调用需要的是「独立的本机服务」Ollama，不是 Python 包：
+#   1. NVIDIA 驱动（nvidia-smi 可见 RTX 3050 显存容量）
+#   2. 安装 Ollama 并启动：ollama serve      （只监听 127.0.0.1:11434）
+#   3. 首次联网拉模型，之后可断网推理：
+#      8GB 档：     ollama pull gemma3:4b ; ollama pull qwen2.5:3b ; ollama pull moondream
+#      4GB/6GB 档： ollama pull moondream ; ollama pull qwen2.5:3b
+#   完整部署步骤见第 14 章 14.9；效果验证与验收标准见第 15 章 15.7。
+#   全程无外部在线 API、无账号、无 API Key。
+#
+# 可选对照路线（本课程未采用）：pip install ollama 后可用 ollama.chat(...) 简化调用，
+# 但会引入第三方依赖，与本课程「仅标准库」主线不一致，故不列入必需依赖。
+#
+# JupyterLab 是课件阅读环境，不属于课程内容依赖：
+#   python3 -m pip install jupyterlab

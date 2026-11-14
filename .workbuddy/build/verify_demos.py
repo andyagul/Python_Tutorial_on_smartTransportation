@@ -3,8 +3,14 @@
 """交付前校验：notebook 中的示例是否「可运行且输出与文档一致」。
 
 两类都校验：
-1. 随堂示例（围栏 demo<知识点号>，单元格 metadata 带 demo）：比对紧随其后的「预期输出」块；
-2. 文件型示例与练习（围栏 python 示例5A1_xxx.py / 练习5A1_xxx.py）：执行 .py 文件，比对紧随其后的「运行结果」块。
+1. 内联示例（围栏 demo<知识点号>，单元格 metadata 带 demo）：比对紧随其后的「预期输出」块；
+   - 随堂示例 demoX-Y（81 个）、变式示例 demoX-Yb（88 个，其中 74 个为知识点体系优化新增）；
+2. 文件型示例与练习：执行 .py 文件，比对紧随其后的「运行结果」块。
+   - 05A 节：文件名形如 示例5A1_xxx.py、练习5A2_xxx.py（14 个）；
+   - 第 14/15 章：文件名形如 case1_xxx.py、practice1_xxx.py、practice1_xxx_答案.py（12 个）
+     （这两章的主程序默认走离线演示模式，输出可逐字复现，故同样纳入校验）。
+
+当前全量：169 个内联 + 26 个文件型 = 195 条。
 """
 
 import glob
@@ -16,8 +22,11 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 文件型示例 / 练习：文件名形如 示例5A1_xxx.py、练习5A2_xxx.py
+# 05A 节文件型示例 / 练习
 FILE_DEMO = re.compile(r"^(示例|练习)5A\d")
+# 第 14/15 章文件型案例、练习与参考答案
+AI_CHAPTER = re.compile(r"^1[45]")
+AI_FILE_DEMO = re.compile(r"^(case|practice)\d")
 
 
 def doc_output(md_src):
@@ -32,13 +41,15 @@ def main():
         nb = json.load(open(nb_path, encoding="utf-8"))
         cells = nb["cells"]
         chapter_dir = os.path.dirname(nb_path)
+        is_ai_chapter = bool(AI_CHAPTER.match(os.path.basename(chapter_dir)))
         for i, c in enumerate(cells):
             if c["cell_type"] != "code":
                 continue
             meta = c.get("metadata", {})
             kp = meta.get("demo")
             src_file = meta.get("source_file", "")
-            is_file_demo = bool(FILE_DEMO.match(src_file))
+            is_file_demo = bool(FILE_DEMO.match(src_file)) or (
+                is_ai_chapter and bool(AI_FILE_DEMO.match(src_file)))
             if not kp and not is_file_demo:
                 continue
             label = "知识点 %s" % kp if kp else src_file
