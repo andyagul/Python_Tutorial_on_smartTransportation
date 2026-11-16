@@ -122,11 +122,11 @@ Python_Tutorial_on_smartTransportation/
 ### 1. 获取代码
 
 ```bash
-git clone https://gitee.com/<你的 Gitee 用户名>/Python_Tutorial_on_smartTransportation.git
+git clone https://github.com/andyagul/Python_Tutorial_on_smartTransportation.git
 cd Python_Tutorial_on_smartTransportation
 ```
 
-> 也可以直接在仓库页面点「克隆/下载」→ 下载 ZIP 后解压，效果相同。
+> 也可以直接在 GitHub 仓库页面点「<> Code」→「Download ZIP」下载后解压，效果相同。
 
 ### 2. 安装 JupyterLab
 
