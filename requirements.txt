@@ -15,7 +15,7 @@ pygame>=2.1
 #   3. 首次联网拉模型，之后可断网推理：
 #      8GB 档：     ollama pull gemma3:4b ; ollama pull qwen2.5:3b ; ollama pull moondream
 #      4GB/6GB 档： ollama pull moondream ; ollama pull qwen2.5:3b
-#   完整部署步骤见第 14 章 14.9；效果验证与验收标准见第 15 章 15.7。
+#   完整部署步骤见第 14 章 14.9；效果验证与验收标准见第 15 章 15.0.4。
 #   全程无外部在线 API、无账号、无 API Key。
 #
 # 可选对照路线（本课程未采用）：pip install ollama 后可用 ollama.chat(...) 简化调用，
